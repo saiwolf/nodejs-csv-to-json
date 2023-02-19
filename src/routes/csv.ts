@@ -1,46 +1,33 @@
-import express, { Request, Response, NextFunction } from 'express';
+import csv_parse, { Options } from 'csv-parse';
+import express, { Request, Response } from 'express';
 import fs from 'fs';
-import csv_stringify from 'csv-stringify';
+import multer from 'multer';
+import os from 'os';
+
 import Logger from '../_config/logger';
 
-const stringify = csv_stringify.stringify;
+const parse = csv_parse.parse;
+const upload = multer({ dest: os.tmpdir() });
+
 const router = express();
 
-router.post('/create', (req: Request, res: Response) => {
-    const data = req.body.data;
+const parserOptions: Options = {
+    relax_quotes: true,
+}
 
-    if (!data || !data.length) {
-        return res.status(400).json({
-            success: false,
-            message: 'Please enter at least 1 row',
-        });
-    }
+router.post('/read', upload.single('file'), (req: Request, res: Response) => {
+    const file = req.file;
+    const useColumn: boolean = req.body.columnSwitch === "true" ? true : false;
+    parserOptions.columns = useColumn;
 
-    stringify(data, {
-        header: true,
-    }, (err, str) => {
-        const path = './files/' + Date.now() + '.csv'
+    const data = fs.readFileSync(file!.path)
+    parse(data, parserOptions, (err, records) => {
         if (err) {
-            Logger.error(err.message)
-            return res.status(400).json({
-                success: false,
-                message: `${err.message}`
-            })
+            Logger.error(err)
+            return res.status(400).json({success: false, message: `An error occurred reading the file: ${err.message}`})
         }
-        if (!fs.existsSync('./files'))  {
-            fs.mkdirSync('./files')
-        }
-        fs.writeFile(path, str, (err) => {
-            if (err) {
-                Logger.error(err.message);
-                return res.status(400).json({
-                    success: false,
-                    message: `An error occurred: ${err.message}`
-                })
-            }
 
-            res.download(path, 'file.csv')
-        })
+        return res.status(200).json({data: records})
     })
 })
 

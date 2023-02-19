@@ -8,6 +8,7 @@ const app = express();
 
 app.use(morganMiddleware);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public', { index: 'index.html', }));
 
 app.use('/csv', csvRoutes);
