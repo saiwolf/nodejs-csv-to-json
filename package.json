@@ -7,11 +7,18 @@
     "dev": "nodemon ./src/index.ts",
     "build": "tsc"
   },
-  "author": "Robert Cato <saiwolf@swmnu.net>",
+  "author": {
+    "name": "Robert Cato",
+    "email": "saiwolf@swmnu.net",
+    "url": "https://github.com/saiwolf/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saiwolf/nodejs-csv-to-json"
+  },
   "license": "MIT",
   "dependencies": {
     "csv-parse": "^5.3.5",
-    "csv-stringify": "^6.2.4",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "morgan": "^1.10.0",
