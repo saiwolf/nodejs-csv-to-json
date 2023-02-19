@@ -3,13 +3,15 @@ import { isDev, PORT } from './_config';
 import Logger from './_config/logger';
 import morganMiddleware from './_middleware/morganMiddleware';
 import csvRoutes from './routes/csv';
+import path from 'path';
 
 const app = express();
+const publicFiles = path.resolve(__dirname, '../public')
 
 app.use(morganMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname + '/public', { index: 'index.html', }));
+app.use(express.static(publicFiles, { index: 'index.html', }));
 
 app.use('/csv', csvRoutes);
 
@@ -26,6 +28,6 @@ if (isDev) {
 }
 
 app.listen(PORT, () => {
-    Logger.info(`Serving static files at: ${__dirname + '/public'}`);
+    Logger.info(`Serving static files at: ${publicFiles}`);
     Logger.info(`Listening on port ${PORT}`);
 });
