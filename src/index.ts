@@ -2,14 +2,15 @@ import express from 'express';
 import { isDev, PORT } from './_config';
 import Logger from './_config/logger';
 import morganMiddleware from './_middleware/morganMiddleware';
+import csvRoutes from './routes/csv';
 
 const app = express();
 
 app.use(morganMiddleware);
+app.use(express.json());
+app.use(express.static(__dirname + '/public', { index: 'index.html', }));
 
-app.get('./favicon.ico', (_, res) => {
-    res.status(200).send(null);
-})
+app.use('/csv', csvRoutes);
 
 if (isDev) {
     app.get("/logger", (_, res) => {
@@ -24,5 +25,6 @@ if (isDev) {
 }
 
 app.listen(PORT, () => {
+    Logger.info(`Serving static files at: ${__dirname + '/public'}`);
     Logger.info(`Listening on port ${PORT}`);
 });

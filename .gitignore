@@ -22,3 +22,6 @@ package-lock.json
 
 # Ignore logs
 logs/
+
+# Ignore uploads
+files/
