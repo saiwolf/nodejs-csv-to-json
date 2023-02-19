@@ -1,5 +1,5 @@
 import express from 'express';
-import { isDev, PORT } from './_config';
+import { envName, isDev, PORT } from './_config';
 import Logger from './_config/logger';
 import morganMiddleware from './_middleware/morganMiddleware';
 import csvRoutes from './routes/csv';
@@ -28,6 +28,7 @@ if (isDev) {
 }
 
 app.listen(PORT, () => {
+    Logger.info(`Server is running in environment: ${envName}`)
     Logger.info(`Serving static files at: ${publicFiles}`);
-    Logger.info(`Listening on port ${PORT}`);
+    Logger.info(`Listening on port ${PORT} at url: http://localhost:${PORT}/`);
 });
